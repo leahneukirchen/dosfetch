@@ -6,6 +6,15 @@ Written in Turbo Pascal 7.
 
 Pull requests welcome!
 
+### Building
+
+You need Turbo Pascal 7 (earlier versions may work):
+
+```
+tpc dosfetch
+
+```
+
 ### Copying
 
 Written by Leah Neukirchen <leah@vuxu.org>
