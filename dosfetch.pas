@@ -142,33 +142,35 @@ end;
 procedure colorline(s : string);
 var y, b, r : string;
 begin
-   write(' ');
    textcolor(yellow);     write(copy(s, 1, 14));
    textcolor(lightblue);  write(copy(s, 15,14));
    textcolor(lightred);   write(copy(s, 29,14));
    normvideo;
-   write('  ');
+   writeln;
 end;
 
 begin
    clrscr;
    writeln;
 
+   window(2, 2, 80, 25);
    colorline('88888888ba,     ,ad8888ba,    ad88888ba  ');
-   textcolor(white); write('OS: '); normvideo; dosver;
    colorline('88      `"8b   d8"''    `"8b  d8"     "8b ');
-   textcolor(white); write('Shell: '); normvideo; writeln(getenv('COMSPEC'));
    colorline('88        `8b d8''        `8b Y8,         ');
-   textcolor(white); write('Floppy drives: '); normvideo; floppy;
    colorline('88         88 88          88 `Y8aaaaa,   ');
-   textcolor(white); write('Disk: '); normvideo; disksize(0);
    colorline('88         88 88          88   `"""""8b, ');
-   textcolor(white); write('Base Memory: '); normvideo; base_memory;
    colorline('88         8P Y8,        ,8P         `8b ');
-   textcolor(white); write('Ext. Memory: '); normvideo; extended_memory;
    colorline('88      .a8P   Y8a.    .a8P  Y8a     a8P ');
-   textcolor(white); write('Floating Point Unit: '); normvideo; fpu;
    colorline('88888888Y"''     `"Y8888Y"''    "Y88888P"');
+
+   window(45, 2, 80, 25);
+   textcolor(white); write('OS: '); normvideo; dosver;
+   textcolor(white); write('Shell: '); normvideo; writeln(getenv('COMSPEC'));
+   textcolor(white); write('Floppy drives: '); normvideo; floppy;
+   textcolor(white); write('Disk: '); normvideo; disksize(0);
+   textcolor(white); write('Base Memory: '); normvideo; base_memory;
+   textcolor(white); write('Ext. Memory: '); normvideo; extended_memory;
+   textcolor(white); write('Floating Point Unit: '); normvideo; fpu;
 
    writeln;
 end.
