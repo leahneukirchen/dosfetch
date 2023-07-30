@@ -23,8 +23,13 @@ begin
 end;
 
 procedure base_memory;
+var a : integer;
 begin
-   writeln(cmos($15) + 256*cmos($16), ' KB');
+   asm
+     int $12;
+     mov a, ax;
+   end;
+   writeln(a, ' KB');
 end;
 
 procedure extended_memory;
