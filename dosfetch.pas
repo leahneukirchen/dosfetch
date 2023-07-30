@@ -155,9 +155,9 @@ begin
    writeln;
 
    colorline('88888888ba,     ,ad8888ba,    ad88888ba  ');
-   textcolor(white); write('OS: '); normvideo; dosver; 
+   textcolor(white); write('OS: '); normvideo; dosver;
    colorline('88      `"8b   d8"''    `"8b  d8"     "8b ');
-   textcolor(white); write('Shell: '); normvideo; writeln(getenv('COMSPEC')); 
+   textcolor(white); write('Shell: '); normvideo; writeln(getenv('COMSPEC'));
    colorline('88        `8b d8''        `8b Y8,         ');
    textcolor(white); write('Floppy drives: '); normvideo; floppy;
    colorline('88         88 88          88 `Y8aaaaa,   ');
