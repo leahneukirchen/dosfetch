@@ -33,8 +33,40 @@ begin
 end;
 
 procedure extended_memory;
+var a, c, d : integer;
+    l : longint;
+    err : byte;
 begin
-   writeln(cmos($17) + 256*longint(cmos($18)), ' KB');
+   err := 0;
+
+   asm
+     mov ah, $88;
+     int $15;
+     jnc @@skip;
+     mov err, ah;
+     @@skip:
+     mov a, ax;
+   end;
+
+   if err > 0 then
+      writeln('none')  { XXX could be wrong on XT }
+   else begin
+      asm
+         clc;
+         mov ax, $E801;
+         int $15;
+         jnc @@skip;
+         mov err, ah;
+         @@skip:
+         mov c, cx;
+         mov d, dx;
+      end;
+
+      if err > 0 then
+         writeln(cmos($17) + 256*longint(cmos($18)), ' KB')
+      else
+         writeln(longint(c) + 64*longint(d), ' KB');
+   end;
 end;
 
 procedure disksize(disk: byte);
