@@ -84,8 +84,8 @@ begin
    end;
    free := longint(a)*longint(c)*longint(b);
    total := longint(a)*longint(c)*longint(d);
-   write(free div 1024, '/', total div 1024, ' KB (');
-   writeln(round(100-(free/total)*100), '% free)');
+   write(total div 1024 - free div 1024, '/', total div 1024, ' KB (');
+   writeln(round((free/total)*100), '% free)');
 end;
 
 procedure dosver;
