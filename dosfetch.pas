@@ -70,7 +70,7 @@ begin
 end;
 
 procedure disksize(disk: byte);
-var a, b, c, d : integer;
+var a, b, c, d : word;
    total, free : longint;
 begin
    asm
