@@ -8,7 +8,7 @@ Pull requests welcome!
 
 ### Building
 
-You need Turbo Pascal 7 (earlier versions may work):
+You need Turbo Pascal 6 or later (because of asm) to compile the source:
 
 ```
 tpc dosfetch
