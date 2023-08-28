@@ -142,11 +142,11 @@ end;
  * Code from: https://github.com/Scalibq/DOS_SDK/blob/main/ASM/8259A.asm
  *)
 procedure machine;
-const MACHINE_PCXT: byte = 0;
-      MACHINE_PCAT: byte = 1;
-      MACHINE_PS2 : byte = 3;
-      PC_PIC2_DATA : byte = $A1;   {compiler didn't allow this constants}
-      PC_DELAY_PORT : byte = $EE;  {compiler didn't allow this constants}
+const MACHINE_PCXT    = 0;
+      MACHINE_PCAT    = 1;
+      MACHINE_PS2     = 3;
+      PC_PIC2_DATA    = $A1;
+      PC_DELAY_PORT   = $EE;
 var a : byte;
 begin
     asm
@@ -191,16 +191,16 @@ begin
         cli
 
         {; First check for physical second PIC }
-        in al, $A1 {=PC_PIC2_DATA}
-        mov bl, al    {; Save PIC2 mask }
-        not al        {; Flip bits to see if they 'stick' }
-        out $A1, al {=PC_PIC2_DATA}
-        out $EE, al   {=PC_DELAY_PORT}  {; delay }
-        in al, $A1 {=PC_PIC2_DATA}
-        xor al, bl    {; If writing worked, we expect al to be 0FFh }
-        inc al        {; Set zero flag on 0FFh }
+        in al, PC_PIC2_DATA
+        mov bl, al             {; Save PIC2 mask }
+        not al                 {; Flip bits to see if they 'stick' }
+        out PC_PIC2_DATA, al
+        out PC_DELAY_PORT, al  {; delay }
+        in al, PC_PIC2_DATA
+        xor al, bl             {; If writing worked, we expect al to be 0FFh }
+        inc al                 {; Set zero flag on 0FFh }
         mov al, bl
-        out $A1, al   {=PC_PIC2_DATA} {; Restore mask }
+        out PC_PIC2_DATA, al   {; Restore mask }
         jnz @@noCascade
 
         mov cl, MACHINE_PCAT
@@ -212,13 +212,13 @@ begin
         pop es
         mov a, cl
     end;
-    { Couldn't get this to work with Case-statement in combination with Const-values }
-    if a = MACHINE_PCXT then writeln('PCXT')
-    else 
-        if a = MACHINE_PCAT then writeln('PCAT')
-        else 
-            if a = MACHINE_PS2 then writeln('PS2')
-            else writeln('Unknown');
+    case a of
+        MACHINE_PCXT: writeln('PCXT');
+        MACHINE_PCAT: writeln('PCAT');
+        MACHINE_PS2:  writeln('PS2');
+    else
+        writeln('Unknown');
+    end;
 end;
 
 procedure colorline(s : string);
@@ -254,6 +254,4 @@ begin
    textcolor(white); write('Ext. Memory: '); normvideo; extended_memory;
    textcolor(white); write('Machine: '); normvideo; machine;
    textcolor(white); write('Floating Point Unit: '); normvideo; fpu;
-
-   writeln;
 end.
