@@ -138,6 +138,88 @@ begin
      writeln('no');
 end;
 
+(*
+ * Code from: https://github.com/Scalibq/DOS_SDK/blob/main/ASM/8259A.asm
+ *)
+procedure machine;
+const MACHINE_PCXT    = 0;
+      MACHINE_PCAT    = 1;
+      MACHINE_PS2     = 3;
+      PC_PIC2_DATA    = $A1;
+      PC_DELAY_PORT   = $EE;
+var a : byte;
+begin
+    asm
+        mov cl, MACHINE_PCXT
+        push es
+
+        {; Get BIOS configuration }
+        mov ah, 0C0h
+        int 015h
+        jc @@notSupported
+
+        mov al, es:[bx+5]    {; Get feature byte 1 }
+        test al, 040h        {; Do we have a second 8259A? }
+        jz @@exit
+
+        mov cl, MACHINE_PCAT
+
+        test al, 03h        {; Do we have MCA bus? }
+        jz @@exit
+
+        mov cl, MACHINE_PS2
+        jmp @@exit
+    
+    @@notSupported:
+        {; First try to test for known machine byte }
+        mov ax, 0F000h
+        mov es, ax
+        mov al, es:[0FFFEh]
+    
+        {; Is it a PC, XT or PCjr (FF, FE and FD respectively) }
+        cmp al, 0FDh
+        jae @@exit
+    
+        {; Is it an AT? }
+        cmp al, 0FCh
+        jne @@unknownMachineType
+    
+        mov cl, MACHINE_PCAT
+        jmp @@exit
+    
+    @@unknownMachineType:
+        cli
+
+        {; First check for physical second PIC }
+        in al, PC_PIC2_DATA
+        mov bl, al             {; Save PIC2 mask }
+        not al                 {; Flip bits to see if they 'stick' }
+        out PC_PIC2_DATA, al
+        out PC_DELAY_PORT, al  {; delay }
+        in al, PC_PIC2_DATA
+        xor al, bl             {; If writing worked, we expect al to be 0FFh }
+        inc al                 {; Set zero flag on 0FFh }
+        mov al, bl
+        out PC_PIC2_DATA, al   {; Restore mask }
+        jnz @@noCascade
+
+        mov cl, MACHINE_PCAT
+    
+    @@noCascade:
+        sti
+    
+    @@exit:
+        pop es
+        mov a, cl
+    end;
+    case a of
+        MACHINE_PCXT: writeln('PCXT');
+        MACHINE_PCAT: writeln('PCAT');
+        MACHINE_PS2:  writeln('PS2');
+    else
+        writeln('Unknown');
+    end;
+end;
 
 procedure colorline(s : string);
 var y, b, r : string;
@@ -170,7 +252,6 @@ begin
    textcolor(white); write('Disk: '); normvideo; disksize(0);
    textcolor(white); write('Base Memory: '); normvideo; base_memory;
    textcolor(white); write('Ext. Memory: '); normvideo; extended_memory;
+   textcolor(white); write('Machine: '); normvideo; machine;
    textcolor(white); write('Floating Point Unit: '); normvideo; fpu;
-
-   writeln;
 end.
